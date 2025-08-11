@@ -1,0 +1,734 @@
+
+
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางคำนวณการเทรดทอง</title>
+    <style>
+        :root {
+            --bg-gradient-light: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --card-bg-light: rgba(255, 255, 255, 0.95);
+            --card-bg-dark: rgba(15, 23, 42, 0.9);
+            --input-bg-light: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            --input-bg-dark: linear-gradient(145deg, rgba(51, 65, 85, 0.3), rgba(30, 41, 59, 0.2));
+            --text-light: #333;
+            --text-dark: #f1f5f9;
+            --text-secondary-light: white;
+            --text-secondary-dark: #cbd5e1;
+            --border-light: rgba(255, 255, 255, 0.2);
+            --border-dark: rgba(148, 163, 184, 0.2);
+            --input-field-light: rgba(255, 255, 255, 0.95);
+            --input-field-dark: rgba(30, 41, 59, 0.8);
+            --table-row-light: #f8f9ff;
+            --table-row-dark: rgba(30, 41, 59, 0.5);
+            --table-hover-light: #e8f0ff;
+            --table-hover-dark: rgba(51, 65, 85, 0.7);
+            --shadow-light: 0 20px 40px rgba(0,0,0,0.1);
+            --shadow-dark: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: var(--bg-gradient-light);
+            --card-bg: var(--card-bg-light);
+            --input-section-bg: var(--input-bg-light);
+            --text-primary: var(--text-light);
+            --text-secondary: var(--text-secondary-light);
+            --border-color: var(--border-light);
+            --input-field-bg: var(--input-field-light);
+            --table-row-even: var(--table-row-light);
+            --table-row-hover: var(--table-hover-light);
+            --shadow: var(--shadow-light);
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: var(--bg-gradient-dark);
+            --card-bg: var(--card-bg-dark);
+            --input-section-bg: var(--input-bg-dark);
+            --text-primary: var(--text-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --border-color: var(--border-dark);
+            --input-field-bg: var(--input-field-dark);
+            --table-row-even: var(--table-row-dark);
+            --table-row-hover: var(--table-hover-dark);
+            --shadow: var(--shadow-dark);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            transition: all 0.5s ease;
+        }
+        
+        body[data-theme="light"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        body[data-theme="dark"] {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+        
+        .container[data-theme="light"] {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .container[data-theme="dark"] {
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .header h1 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-size: 28px;
+            transition: color 0.5s ease;
+        }
+        
+        [data-theme="light"] .header h1 {
+            color: #333;
+        }
+        
+        [data-theme="dark"] .header h1 {
+            color: #f1f5f9;
+        }
+        
+        [data-theme="light"] .header p {
+            color: #666;
+        }
+        
+        [data-theme="dark"] .header p {
+            color: #cbd5e1;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 20px;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        [data-theme="dark"] .theme-toggle {
+            background: linear-gradient(45deg, #3b82f6, #6366f1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .stat-card .value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 14px;
+        }
+        
+        th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9ff;
+        }
+        
+        tr:hover {
+            background-color: #e8f0ff;
+            transform: scale(1.02);
+            transition: all 0.2s ease;
+        }
+        
+        .profit {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .loss {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .balance {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        .lot-size {
+            color: #8e44ad;
+            font-weight: bold;
+        }
+        
+        .milestone {
+            background: linear-gradient(45deg, #FFD700, #FFA500) !important;
+            color: #333;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(255,215,0,0.3);
+        }
+        
+        .input-section {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        
+        .input-section h2 {
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 22px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .input-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group label {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .input-group label .icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .input-group input {
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .input-group input::placeholder {
+            color: #999;
+            font-style: italic;
+            opacity: 0.8;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 
+                0 0 0 3px rgba(102, 126, 234, 0.1),
+                0 8px 25px rgba(102, 126, 234, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .input-group input:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+        
+        .input-group::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), transparent);
+            border-radius: 15px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .input-group:hover::before {
+            opacity: 1;
+        }
+        
+        /* Input animations */
+        @keyframes inputGlow {
+            0% { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+            50% { box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2); }
+            100% { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        }
+        
+        .input-group input:focus {
+            animation: inputGlow 2s ease-in-out infinite;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 8px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="container">
+        <div class="header">
+            <button class="theme-toggle" onclick="toggleTheme()" title="เปลี่ยนธีม">🌓</button>
+            <h1>📈 ตารางคำนวณการเทรดทอง</h1>
+        </div>
+        
+        <div class="input-section">
+            <h2>⚙️ ตั้งค่าการเทรด</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="initialBalance"><span class="icon">💰</span>ทุนเริ่มต้น ($)</label>
+                    <input type="number" id="initialBalance" value="300" min="1" placeholder="เช่น 300, 500, 1000">
+                </div>
+                <div class="input-group">
+                    <label for="targetBalance"><span class="icon">🎯</span>เป้าหมาย ($)</label>
+                    <input type="number" id="targetBalance" value="100000" min="1" placeholder="เช่น 10000, 50000, 100000">
+                </div>
+                <div class="input-group">
+                    <label for="riskPercent"><span class="icon">⚡</span>Risk ต่อเทรด (%)</label>
+                    <input type="number" id="riskPercent" value="4" min="0.1" max="20" step="0.1" placeholder="แนะนำ 1-5%">
+                </div>
+                <div class="input-group">
+                    <label for="rewardRatio"><span class="icon">📈</span>Risk:Reward (1:X)</label>
+                    <input type="number" id="rewardRatio" value="2" min="0.1" step="0.1" placeholder="เช่น 1.5, 2, 3">
+                </div>
+                <div class="input-group">
+                    <label for="winRate"><span class="icon">🏆</span>Win Rate (%)</label>
+                    <input type="number" id="winRate" value="60" min="1" max="99" placeholder="เช่น 55, 60, 70">
+                </div>
+                <div class="input-group">
+                    <label for="slPoints"><span class="icon">🛑</span>Stop Loss (จุด)</label>
+                    <input type="number" id="slPoints" value="30" min="1" placeholder="เช่น 20, 30, 50">
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>ทุนเริ่มต้น</h3>
+                <div class="value" id="displayInitialBalance">$300</div>
+            </div>
+            <div class="stat-card">
+                <h3>เป้าหมาย</h3>
+                <div class="value" id="displayTargetBalance">$100,000</div>
+            </div>
+            <div class="stat-card">
+                <h3>Risk per Trade</h3>
+                <div class="value" id="displayRiskPercent">4%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Risk:Reward</h3>
+                <div class="value" id="displayRewardRatio">1:2</div>
+            </div>
+            <div class="stat-card">
+                <h3>Win Rate</h3>
+                <div class="value" id="displayWinRate">60%</div>
+            </div>
+            <div class="stat-card">
+                <h3>SL/TP</h3>
+                <div class="value" id="displaySlTp">30/60 จุด</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="generateTrades()">🎯 สร้างตาราง</button>
+            <button onclick="exportData()">📊 Export ข้อมูล</button>
+            <button onclick="resetTable()">🔄 Reset ค่าเริ่มต้น</button>
+        </div>
+        
+        <div class="table-container">
+            <table id="tradingTable">
+                <thead>
+                    <tr>
+                        <th>เทรดที่</th>
+                        <th>Balance เริ่มต้น</th>
+                        <th>Lot Size</th>
+                        <th>Risk Amount</th>
+                        <th>ผลการเทรด</th>
+                        <th>กำไร/ขาดทุน</th>
+                        <th>Balance ปัจจุบัน</th>
+                        <th>ROI (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- ข้อมูลจะถูกเพิ่มที่นี่ -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let trades = [];
+        let settings = {
+            initialBalance: 300,
+            targetBalance: 100000,
+            riskPercent: 0.04,
+            rewardRatio: 2,
+            winRate: 0.6,
+            slPoints: 30
+        };
+        
+        // Theme management
+        function initTheme() {
+            const savedTheme = 'dark'; // เริ่มต้นด้วย dark mode
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+        
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            // อัพเดททุก element ที่ต้องการ
+            document.documentElement.setAttribute('data-theme', newTheme);
+            updateThemeAttributes(newTheme);
+            updateThemeIcon(newTheme);
+            
+            console.log('Theme changed to:', newTheme); // Debug log
+        }
+        
+        function updateThemeIcon(theme) {
+            const button = document.querySelector('.theme-toggle');
+            if (button) {
+                button.textContent = theme === 'light' ? '🌙' : '☀️';
+                button.title = theme === 'light' ? 'เปลี่ยนเป็น Dark Mode' : 'เปลี่ยนเป็น Light Mode';
+            }
+        }
+        
+        // ค่า Pip ของทอง (XAUUSD) โดยประมาณ $1 per pip สำหรับ 0.01 lot
+        const goldPipValue = 1; // $1 per pip for 0.01 lot
+        
+        function updateSettings() {
+            settings.initialBalance = parseFloat(document.getElementById('initialBalance').value) || 300;
+            settings.targetBalance = parseFloat(document.getElementById('targetBalance').value) || 100000;
+            settings.riskPercent = (parseFloat(document.getElementById('riskPercent').value) || 4) / 100;
+            settings.rewardRatio = parseFloat(document.getElementById('rewardRatio').value) || 2;
+            settings.winRate = (parseFloat(document.getElementById('winRate').value) || 60) / 100;
+            settings.slPoints = parseFloat(document.getElementById('slPoints').value) || 30;
+            
+            // อัพเดทการแสดงผล
+            updateDisplayValues();
+        }
+        
+        function updateDisplayValues() {
+            document.getElementById('displayInitialBalance').textContent = `${settings.initialBalance.toLocaleString()}`;
+            document.getElementById('displayTargetBalance').textContent = `${settings.targetBalance.toLocaleString()}`;
+            document.getElementById('displayRiskPercent').textContent = `${(settings.riskPercent * 100)}%`;
+            document.getElementById('displayRewardRatio').textContent = `1:${settings.rewardRatio}`;
+            document.getElementById('displayWinRate').textContent = `${(settings.winRate * 100)}%`;
+            document.getElementById('displaySlTp').textContent = `${settings.slPoints}/${settings.slPoints * settings.rewardRatio} จุด`;
+        }
+        
+        function calculateLotSize(balance, riskAmount) {
+            // Lot size = Risk Amount / (SL in points * pip value per point)
+            // สำหรับทอง 1 lot = $10 per point, 0.01 lot = $0.10 per point
+            const lotSize = riskAmount / (settings.slPoints * 10); // 10 = pip value per point for 1 lot
+            return Math.round(lotSize * 100) / 100; // ปัดเศษเป็น 2 ทศนิยม
+        }
+        
+        function generateTrades() {
+            updateSettings(); // อัพเดทค่าจากช่องกรอก
+            
+            trades = [];
+            let currentBalance = settings.initialBalance;
+            let tradeNumber = 1;
+            
+            while (currentBalance < settings.targetBalance && currentBalance > 0 && tradeNumber <= 1000) {
+                const riskAmount = currentBalance * settings.riskPercent;
+                const lotSize = calculateLotSize(currentBalance, riskAmount);
+                
+                // สุ่มผลการเทรดตาม Win Rate
+                const isWin = Math.random() < settings.winRate;
+                let pnl, result;
+                
+                if (isWin) {
+                    pnl = riskAmount * settings.rewardRatio;
+                    result = "WIN";
+                } else {
+                    pnl = -riskAmount;
+                    result = "LOSS";
+                }
+                
+                const newBalance = currentBalance + pnl;
+                const roi = ((newBalance - settings.initialBalance) / settings.initialBalance) * 100;
+                
+                trades.push({
+                    trade: tradeNumber,
+                    startBalance: currentBalance,
+                    lotSize: lotSize,
+                    riskAmount: riskAmount,
+                    result: result,
+                    pnl: pnl,
+                    endBalance: newBalance,
+                    roi: roi
+                });
+                
+                currentBalance = newBalance;
+                tradeNumber++;
+                
+                // หยุดถ้าเสียเงินหมด
+                if (currentBalance <= 0) break;
+            }
+            
+            displayTrades();
+            updateProgress();
+        }
+        
+        function displayTrades() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            
+            trades.forEach((trade, index) => {
+                const row = document.createElement('tr');
+                
+                // เพิ่ม class milestone สำหรับการเทรดที่สำคัญ
+                const isMilestone = trade.endBalance >= 1000 || trade.endBalance >= 5000 || 
+                                  trade.endBalance >= 10000 || trade.endBalance >= 25000 || 
+                                  trade.endBalance >= 50000;
+                
+                if (isMilestone && !row.classList.contains('milestone')) {
+                    row.classList.add('milestone');
+                }
+                
+                row.innerHTML = `
+                    <td>${trade.trade}</td>
+                    <td class="balance">${trade.startBalance.toFixed(2)}</td>
+                    <td class="lot-size">${trade.lotSize.toFixed(2)}</td>
+                    <td>${trade.riskAmount.toFixed(2)}</td>
+                    <td class="${trade.result === 'WIN' ? 'profit' : 'loss'}">${trade.result}</td>
+                    <td class="${trade.pnl > 0 ? 'profit' : 'loss'}">${trade.pnl.toFixed(2)}</td>
+                    <td class="balance">${trade.endBalance.toFixed(2)}</td>
+                    <td class="${trade.roi > 0 ? 'profit' : 'loss'}">${trade.roi.toFixed(1)}%</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function updateProgress() {
+            if (trades.length > 0) {
+                const lastBalance = trades[trades.length - 1].endBalance;
+                const progress = Math.min((lastBalance / settings.targetBalance) * 100, 100);
+                document.getElementById('progressBar').style.width = progress + '%';
+            }
+        }
+        
+        function exportData() {
+            if (trades.length === 0) {
+                alert('กรุณาสร้างตารางก่อน');
+                return;
+            }
+            
+            let csv = 'Trade,Start Balance,Lot Size,Risk Amount,Result,P&L,End Balance,ROI\n';
+            trades.forEach(trade => {
+                csv += `${trade.trade},${trade.startBalance.toFixed(2)},${trade.lotSize.toFixed(2)},${trade.riskAmount.toFixed(2)},${trade.result},${trade.pnl.toFixed(2)},${trade.endBalance.toFixed(2)},${trade.roi.toFixed(1)}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gold_trading_results.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function resetTable() {
+            trades = [];
+            document.getElementById('tableBody').innerHTML = '';
+            document.getElementById('progressBar').style.width = '0%';
+            
+            // รีเซ็ตค่าเป็นค่าเริ่มต้น
+            document.getElementById('initialBalance').value = 300;
+            document.getElementById('targetBalance').value = 100000;
+            document.getElementById('riskPercent').value = 4;
+            document.getElementById('rewardRatio').value = 2;
+            document.getElementById('winRate').value = 60;
+            document.getElementById('slPoints').value = 30;
+            
+            updateSettings(); // อัพเดทค่าใหม่
+        }
+        
+        // Event listeners สำหรับการเปลี่ยนแปลงค่าในช่องกรอก
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize theme
+            initTheme();
+            
+            const inputs = ['initialBalance', 'targetBalance', 'riskPercent', 'rewardRatio', 'winRate', 'slPoints'];
+            inputs.forEach(inputId => {
+                document.getElementById(inputId).addEventListener('input', updateDisplayValues);
+            });
+            
+            // เพิ่ม attribute data-theme ให้ container
+            const container = document.querySelector('.container');
+            if (container) {
+                container.setAttribute('data-theme', 'dark');
+            }
+            
+            updateDisplayValues(); // อัพเดทค่าเริ่มต้น
+            generateTrades(); // สร้างตารางเริ่มต้น
+        });
+        
+        // ฟังก์ชันสำหรับอัพเดท data-theme attributes
+        function updateThemeAttributes(theme) {
+            document.body.setAttribute('data-theme', theme);
+            const container = document.querySelector('.container');
+            if (container) {
+                container.setAttribute('data-theme', theme);
+            }
+        }
+    </script>
+</body>
+</html>
